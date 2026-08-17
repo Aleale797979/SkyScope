@@ -42,13 +42,15 @@ def solve():
     data = login.json()
 
     if data.get("status") != "success":
-        return jsonify({"error": "API key Astrometry.net non valida"}), 401
+    return jsonify({"error": "API key Astrometry.net non valida"}), 401
+
+session_key = data["session"]
 
     # Upload della foto
     upload = session.post(
         ASTROMETRY_URL + "/upload",
         data={
-            "request-json": '{"publicly_visible":"n"}'
+    "request-json": '{"session":"' + session_key + '","publicly_visible":"n"}'
         },
         files={
             "file": (
