@@ -3,6 +3,10 @@ from flask_cors import CORS
 import requests
 import time
 import os
+from PIL import Image
+from pillow_heif import register_heif_opener
+
+register_heif_opener()
 
 app = Flask(__name__)
 CORS(app)
