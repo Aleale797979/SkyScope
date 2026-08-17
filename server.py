@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
 import time
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -20,7 +21,7 @@ def solve():
     if "image" not in request.files:
         return jsonify({"error": "Nessuna immagine ricevuta"}), 400
 
-    api_key = request.headers.get("X-Astrometry-Key")
+    api_key = os.environ.get("ASTROMETRY_API_KEY")
 
     if not api_key:
         return jsonify({"error": "API key mancante"}), 400
