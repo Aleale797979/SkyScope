@@ -13,6 +13,7 @@ CORS(app)
 
 ASTROMETRY_URL = "https://nova.astrometry.net/api"
 
+
 @app.route("/")
 def home():
     return jsonify({
@@ -20,36 +21,46 @@ def home():
         "service": "SkyScope Backend"
     })
 
+
 @app.route("/solve", methods=["POST"])
 def solve():
+
     if "image" not in request.files:
-        return jsonify({"error": "Nessuna immagine ricevuta"}), 400
+        return jsonify({
+            "error": "Nessuna immagine ricevuta"
+        }), 400
 
     api_key = os.environ.get("ASTROMETRY_API_KEY")
 
     if not api_key:
-        return jsonify({"error": "API key mancante"}), 400
+        return jsonify({
+            "error": "API key mancante"
+        }), 400
 
     image = request.files["image"]
+
+    # Conversione automatica HEIC/HEIF → JPEG
     if image.filename.lower().endswith((".heic", ".heif")):
-    converted = Image.open(image.stream)
 
-    converted_path = "/tmp/converted.jpg"
+        converted = Image.open(image.stream)
 
-    converted.convert("RGB").save(
-        converted_path,
-        "JPEG",
-        quality=95
-    )
+        converted_path = "/tmp/converted.jpg"
 
-    upload_file = open(converted_path, "rb")
-    upload_filename = "converted.jpg"
-    upload_mimetype = "image/jpeg"
+        converted.convert("RGB").save(
+            converted_path,
+            "JPEG",
+            quality=95
+        )
 
-else:
-    upload_file = image.stream
-    upload_filename = image.filename
-    upload_mimetype = image.mimetype
+        upload_file = open(converted_path, "rb")
+        upload_filename = "converted.jpg"
+        upload_mimetype = "image/jpeg"
+
+    else:
+
+        upload_file = image.stream
+        upload_filename = image.filename
+        upload_mimetype = image.mimetype
 
     session = requests.Session()
 
@@ -65,22 +76,27 @@ else:
     data = login.json()
 
     if data.get("status") != "success":
-    return jsonify({"error": "API key Astrometry.net non valida"}), 401
+        return jsonify({
+            "error": "API key Astrometry.net non valida"
+        }), 401
 
-session_key = data["session"]
+    session_key = data["session"]
 
     # Upload della foto
     upload = session.post(
         ASTROMETRY_URL + "/upload",
         data={
-    "request-json": '{"session":"' + session_key + '","publicly_visible":"n"}'
+            "request-json": (
+                '{"session":"' + session_key +
+                '","publicly_visible":"n"}'
+            )
         },
         files={
-    "file": (
-        upload_filename,
-        upload_file,
-        upload_mimetype
-    )
+            "file": (
+                upload_filename,
+                upload_file,
+                upload_mimetype
+            )
         },
         timeout=60
     )
@@ -88,10 +104,10 @@ session_key = data["session"]
     result = upload.json()
 
     if result.get("status") != "success":
-    return jsonify({
-        "error": "Upload fallito",
-        "details": result
-    }), 500
+        return jsonify({
+            "error": "Upload fallito",
+            "details": result
+        }), 500
 
     submission_id = result["subid"]
 
@@ -99,6 +115,7 @@ session_key = data["session"]
     job_id = None
 
     for _ in range(60):
+
         time.sleep(2)
 
         response = session.get(
@@ -120,6 +137,7 @@ session_key = data["session"]
 
     # Aspetta il plate solving
     for _ in range(90):
+
         time.sleep(2)
 
         response = session.get(
@@ -134,10 +152,14 @@ session_key = data["session"]
 
         if status == "failure":
             return jsonify({
-                "error": "Astrometry.net non è riuscito a risolvere la foto"
+                "error": (
+                    "Astrometry.net non è riuscito "
+                    "a risolvere la foto"
+                )
             }), 500
 
     else:
+
         return jsonify({
             "error": "Analisi troppo lenta"
         }), 504
@@ -161,6 +183,7 @@ session_key = data["session"]
 
 
 if __name__ == "__main__":
+
     app.run(
         host="0.0.0.0",
         port=10000
