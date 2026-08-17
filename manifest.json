@@ -1,1 +1,11 @@
-
+{
+  "name": "SkyScope",
+  "short_name": "SkyScope",
+  "description": "Interactive Sky Analyzer",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#02040a",
+  "theme_color": "#02040a",
+  "orientation": "portrait",
+  "icons": []
+}
