@@ -276,9 +276,11 @@ analyzeButton.addEventListener("click", async function() {
         if (!response.ok) {
 
             throw new Error(
-                data.error || "Errore durante l'analisi"
-            );
-
+    data.error +
+    (data.details
+        ? " — " + JSON.stringify(data.details)
+        : "")
+);
         }
 
 
