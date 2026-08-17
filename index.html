@@ -1,1 +1,151 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkyScope</title>
 
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #02040a;
+      color: white;
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid #172033;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    header p {
+      color: #8492aa;
+      margin: 7px 0 0;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .upload {
+      border: 2px dashed #263858;
+      border-radius: 18px;
+      padding: 35px 20px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    input[type="file"] {
+      margin-top: 15px;
+    }
+
+    .viewer {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      border-radius: 18px;
+      background: #000;
+      min-height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #skyImage {
+      width: 100%;
+      display: none;
+    }
+
+    .info {
+      margin-top: 20px;
+      padding: 20px;
+      border: 1px solid #172033;
+      border-radius: 18px;
+      background: #070b14;
+    }
+
+    .info h2 {
+      margin-top: 0;
+    }
+
+    .status {
+      color: #5f9cff;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>🌌 SkyScope</h1>
+  <p>Interactive Sky Analyzer</p>
+</header>
+
+<main>
+
+  <section class="upload">
+    <h2>📷 Carica una foto del cielo</h2>
+    <p>Scegli una foto di stelle, costellazioni o oggetti del cielo.</p>
+
+    <input
+      type="file"
+      id="fileInput"
+      accept="image/*"
+    >
+  </section>
+
+  <section class="viewer">
+    <p id="placeholder">La tua foto apparirà qui</p>
+    <img id="skyImage">
+  </section>
+
+  <section class="info">
+    <h2>🔭 Analisi</h2>
+    <p id="status" class="status">
+      In attesa di una foto...
+    </p>
+  </section>
+
+</main>
+
+<script>
+
+const fileInput = document.getElementById("fileInput");
+const skyImage = document.getElementById("skyImage");
+const placeholder = document.getElementById("placeholder");
+const status = document.getElementById("status");
+
+fileInput.addEventListener("change", function () {
+
+  const file = this.files[0];
+
+  if (!file) return;
+
+  const imageURL = URL.createObjectURL(file);
+
+  skyImage.src = imageURL;
+  skyImage.style.display = "block";
+  placeholder.style.display = "none";
+
+  status.textContent =
+    "📷 Foto caricata. Preparazione dell'analisi...";
+
+});
+
+</script>
+
+</body>
+</html>
