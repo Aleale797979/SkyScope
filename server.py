@@ -31,6 +31,25 @@ def solve():
         return jsonify({"error": "API key mancante"}), 400
 
     image = request.files["image"]
+    if image.filename.lower().endswith((".heic", ".heif")):
+    converted = Image.open(image.stream)
+
+    converted_path = "/tmp/converted.jpg"
+
+    converted.convert("RGB").save(
+        converted_path,
+        "JPEG",
+        quality=95
+    )
+
+    upload_file = open(converted_path, "rb")
+    upload_filename = "converted.jpg"
+    upload_mimetype = "image/jpeg"
+
+else:
+    upload_file = image.stream
+    upload_filename = image.filename
+    upload_mimetype = image.mimetype
 
     session = requests.Session()
 
@@ -57,11 +76,11 @@ session_key = data["session"]
     "request-json": '{"session":"' + session_key + '","publicly_visible":"n"}'
         },
         files={
-            "file": (
-                image.filename,
-                image.stream,
-                image.mimetype
-            )
+    "file": (
+        upload_filename,
+        upload_file,
+        upload_mimetype
+    )
         },
         timeout=60
     )
