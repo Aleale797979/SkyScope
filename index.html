@@ -1,149 +1,346 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SkyScope</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<title>SkyScope</title>
 
-    body {
-      margin: 0;
-      background: #02040a;
-      color: white;
-      font-family: Arial, sans-serif;
-      min-height: 100vh;
-    }
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#02040a">
 
-    header {
-      padding: 20px;
-      text-align: center;
-      border-bottom: 1px solid #172033;
-    }
+<style>
 
-    header h1 {
-      margin: 0;
-      font-size: 28px;
-    }
+* {
+    box-sizing: border-box;
+}
 
-    header p {
-      color: #8492aa;
-      margin: 7px 0 0;
-    }
+body {
+    margin: 0;
+    background: #02040a;
+    color: white;
+    font-family: Arial, sans-serif;
+}
 
-    main {
-      max-width: 1000px;
-      margin: auto;
-      padding: 20px;
-    }
+header {
+    padding: 18px;
+    text-align: center;
+    border-bottom: 1px solid #182238;
+}
 
-    .upload {
-      border: 2px dashed #263858;
-      border-radius: 18px;
-      padding: 35px 20px;
-      text-align: center;
-      margin-bottom: 20px;
-    }
+header h1 {
+    margin: 0;
+    font-size: 28px;
+}
 
-    input[type="file"] {
-      margin-top: 15px;
-    }
+header p {
+    margin: 6px 0 0;
+    color: #8290aa;
+}
 
-    .viewer {
-      position: relative;
-      width: 100%;
-      overflow: hidden;
-      border-radius: 18px;
-      background: #000;
-      min-height: 250px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+main {
+    max-width: 1000px;
+    margin: auto;
+    padding: 18px;
+}
 
-    #skyImage {
-      width: 100%;
-      display: none;
-    }
+.upload {
+    border: 2px dashed #273858;
+    border-radius: 18px;
+    padding: 28px;
+    text-align: center;
+    margin-bottom: 18px;
+}
 
-    .info {
-      margin-top: 20px;
-      padding: 20px;
-      border: 1px solid #172033;
-      border-radius: 18px;
-      background: #070b14;
-    }
+button {
+    background: #17243d;
+    color: white;
+    border: 1px solid #40557d;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 16px;
+    margin-top: 12px;
+}
 
-    .info h2 {
-      margin-top: 0;
-    }
+button:active {
+    transform: scale(0.97);
+}
 
-    .status {
-      color: #5f9cff;
+.viewer {
+    position: relative;
+    background: black;
+    border-radius: 18px;
+    overflow: hidden;
+    min-height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#skyImage {
+    width: 100%;
+    display: none;
+}
+
+.info {
+    margin-top: 18px;
+    padding: 18px;
+    background: #070b14;
+    border: 1px solid #182238;
+    border-radius: 18px;
+}
+
+.status {
+    color: #6ea0ff;
+}
+
+.loading {
+    display: none;
+    margin-top: 15px;
+}
+
+.spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid #263858;
+    border-top: 3px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: auto;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
     }
-  </style>
+}
+
+</style>
 </head>
 
 <body>
 
 <header>
-  <h1>🌌 SkyScope</h1>
-  <p>Interactive Sky Analyzer</p>
+
+<h1>🌌 SkyScope</h1>
+
+<p>Interactive Sky Analyzer</p>
+
 </header>
 
 <main>
 
-  <section class="upload">
-    <h2>📷 Carica una foto del cielo</h2>
-    <p>Scegli una foto di stelle, costellazioni o oggetti del cielo.</p>
+<section class="upload">
 
-    <input
-      type="file"
-      id="fileInput"
-      accept="image/*"
-    >
-  </section>
+<h2>📷 Carica il cielo</h2>
 
-  <section class="viewer">
-    <p id="placeholder">La tua foto apparirà qui</p>
-    <img id="skyImage">
-  </section>
+<p>
+Scegli una foto del cielo stellato.
+</p>
 
-  <section class="info">
-    <h2>🔭 Analisi</h2>
-    <p id="status" class="status">
-      In attesa di una foto...
-    </p>
-  </section>
+<input
+    type="file"
+    id="fileInput"
+    accept="image/*"
+>
+
+<br>
+
+<button id="analyzeButton" disabled>
+🔭 Analizza cielo
+</button>
+
+<div class="loading" id="loading">
+
+<div class="spinner"></div>
+
+<p>Sto analizzando il cielo...</p>
+
+</div>
+
+</section>
+
+
+<section class="viewer">
+
+<p id="placeholder">
+La tua foto apparirà qui
+</p>
+
+<img id="skyImage">
+
+</section>
+
+
+<section class="info">
+
+<h2>🔭 Informazioni</h2>
+
+<p id="status" class="status">
+Carica una foto per iniziare.
+</p>
+
+<div id="results"></div>
+
+</section>
 
 </main>
 
+
 <script>
 
-const fileInput = document.getElementById("fileInput");
-const skyImage = document.getElementById("skyImage");
-const placeholder = document.getElementById("placeholder");
-const status = document.getElementById("status");
+const BACKEND =
+"https://skyscope-backend-mhh8.onrender.com";
 
-fileInput.addEventListener("change", function () {
+const fileInput =
+document.getElementById("fileInput");
 
-  const file = this.files[0];
+const analyzeButton =
+document.getElementById("analyzeButton");
 
-  if (!file) return;
+const skyImage =
+document.getElementById("skyImage");
 
-  const imageURL = URL.createObjectURL(file);
+const placeholder =
+document.getElementById("placeholder");
 
-  skyImage.src = imageURL;
-  skyImage.style.display = "block";
-  placeholder.style.display = "none";
+const status =
+document.getElementById("status");
 
-  status.textContent =
-    "📷 Foto caricata. Preparazione dell'analisi...";
+const results =
+document.getElementById("results");
+
+const loading =
+document.getElementById("loading");
+
+let selectedFile = null;
+
+
+fileInput.addEventListener("change", function() {
+
+    selectedFile = this.files[0];
+
+    if (!selectedFile) return;
+
+    const imageURL =
+        URL.createObjectURL(selectedFile);
+
+    skyImage.src = imageURL;
+
+    skyImage.style.display = "block";
+
+    placeholder.style.display = "none";
+
+    analyzeButton.disabled = false;
+
+    status.textContent =
+        "📷 Foto caricata. Premi Analizza cielo.";
+
+    results.innerHTML = "";
 
 });
+
+
+analyzeButton.addEventListener("click", async function() {
+
+    if (!selectedFile) return;
+
+    loading.style.display = "block";
+
+    analyzeButton.disabled = true;
+
+    status.textContent =
+        "🔭 Invio la foto al sistema astronomico...";
+
+    results.innerHTML = "";
+
+    const formData = new FormData();
+
+    formData.append("image", selectedFile);
+
+
+    try {
+
+        const response = await fetch(
+            BACKEND + "/solve",
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+
+        const data = await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error || "Errore durante l'analisi"
+            );
+
+        }
+
+
+        status.textContent =
+            "✅ Campo stellare riconosciuto!";
+
+
+        results.innerHTML = `
+
+        <p>
+        <b>Ascensione retta:</b>
+        ${Number(data.ra).toFixed(5)}°
+        </p>
+
+        <p>
+        <b>Declinazione:</b>
+        ${Number(data.dec).toFixed(5)}°
+        </p>
+
+        <p>
+        <b>Scala:</b>
+        ${Number(data.pixscale).toFixed(3)}
+        arcsec/pixel
+        </p>
+
+        <p>
+        <b>Orientamento:</b>
+        ${Number(data.orientation).toFixed(2)}°
+        </p>
+
+        `;
+
+    }
+
+    catch(error) {
+
+        status.textContent =
+            "❌ Analisi non riuscita.";
+
+        results.innerHTML =
+            "<p>" + error.message + "</p>";
+
+    }
+
+    finally {
+
+        loading.style.display = "none";
+
+        analyzeButton.disabled = false;
+
+    }
+
+});
+
+
+if ("serviceWorker" in navigator) {
+
+    navigator.serviceWorker.register(
+        "sw.js"
+    ).catch(() => {});
+
+}
 
 </script>
 
