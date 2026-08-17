@@ -63,10 +63,10 @@ def solve():
     result = upload.json()
 
     if result.get("status") != "success":
-        return jsonify({
-            "error": "Upload fallito",
-            "details": result
-        }), 500
+    return jsonify({
+        "error": "Upload fallito",
+        "details": result
+    }), 500
 
     submission_id = result["subid"]
 
