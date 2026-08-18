@@ -4,3 +4,5 @@ requests
 gunicorn
 pillow
 pillow-heif
+rawpy
+exifread
