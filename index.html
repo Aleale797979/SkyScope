@@ -1,13 +1,26 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
 <title>SkyScope</title>
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#02040a">
+<link
+    rel="manifest"
+    href="manifest.json"
+>
+
+<meta
+    name="theme-color"
+    content="#02040a"
+>
 
 <style>
 
@@ -16,109 +29,188 @@
 }
 
 body {
+
     margin: 0;
+
     background: #02040a;
+
     color: white;
+
     font-family: Arial, sans-serif;
 }
 
 header {
-    padding: 18px;
+
+    padding: 20px;
+
     text-align: center;
+
     border-bottom: 1px solid #182238;
 }
 
 header h1 {
+
     margin: 0;
-    font-size: 28px;
+
+    font-size: 30px;
 }
 
 header p {
-    margin: 6px 0 0;
+
+    margin: 7px 0 0;
+
     color: #8290aa;
 }
 
 main {
+
     max-width: 1000px;
+
     margin: auto;
+
     padding: 18px;
 }
 
 .upload {
+
     border: 2px dashed #273858;
+
     border-radius: 18px;
+
     padding: 28px;
+
     text-align: center;
+
     margin-bottom: 18px;
 }
 
+input[type="file"] {
+
+    max-width: 100%;
+
+    margin-top: 10px;
+}
+
 button {
+
     background: #17243d;
+
     color: white;
+
     border: 1px solid #40557d;
+
     padding: 12px 20px;
+
     border-radius: 12px;
+
     font-size: 16px;
+
     margin-top: 12px;
 }
 
+button:disabled {
+
+    opacity: 0.5;
+}
+
 button:active {
+
     transform: scale(0.97);
 }
 
 .viewer {
+
     position: relative;
+
     background: black;
+
     border-radius: 18px;
+
     overflow: hidden;
+
     min-height: 280px;
+
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 }
 
 #skyImage {
+
     width: 100%;
+
     display: none;
 }
 
 .info {
+
     margin-top: 18px;
+
     padding: 18px;
+
     background: #070b14;
+
     border: 1px solid #182238;
+
     border-radius: 18px;
 }
 
 .status {
+
     color: #6ea0ff;
 }
 
 .loading {
+
     display: none;
+
     margin-top: 15px;
 }
 
 .spinner {
+
     width: 28px;
+
     height: 28px;
+
     border: 3px solid #263858;
+
     border-top: 3px solid white;
+
     border-radius: 50%;
+
     animation: spin 1s linear infinite;
+
     margin: auto;
 }
 
 @keyframes spin {
+
     to {
         transform: rotate(360deg);
     }
 }
 
+.result-card {
+
+    background: #0b1120;
+
+    border-radius: 12px;
+
+    padding: 12px;
+
+    margin-top: 10px;
+}
+
 </style>
+
 </head>
 
+
 <body>
+
 
 <header>
 
@@ -128,33 +220,58 @@ button:active {
 
 </header>
 
+
 <main>
+
 
 <section class="upload">
 
 <h2>📷 Carica il cielo</h2>
 
 <p>
-Scegli una foto del cielo stellato.
+JPG, PNG, HEIC, DNG e RAW supportati
 </p>
+
 
 <input
     type="file"
     id="fileInput"
-    accept="image/*"
+    accept="
+        image/*,
+        .heic,
+        .heif,
+        .dng,
+        .nef,
+        .cr2,
+        .cr3,
+        .arw,
+        .orf,
+        .rw2
+    "
 >
+
 
 <br>
 
-<button id="analyzeButton" disabled>
+
+<button
+    id="analyzeButton"
+    disabled
+>
 🔭 Analizza cielo
 </button>
 
-<div class="loading" id="loading">
+
+<div
+    class="loading"
+    id="loading"
+>
 
 <div class="spinner"></div>
 
-<p>Sto analizzando il cielo...</p>
+<p>
+Sto analizzando il cielo...
+</p>
 
 </div>
 
@@ -167,7 +284,10 @@ Scegli una foto del cielo stellato.
 La tua foto apparirà qui
 </p>
 
-<img id="skyImage">
+<img
+    id="skyImage"
+    alt="Foto del cielo"
+>
 
 </section>
 
@@ -176,7 +296,10 @@ La tua foto apparirà qui
 
 <h2>🔭 Informazioni</h2>
 
-<p id="status" class="status">
+<p
+    id="status"
+    class="status"
+>
 Carica una foto per iniziare.
 </p>
 
@@ -184,156 +307,338 @@ Carica una foto per iniziare.
 
 </section>
 
+
 </main>
 
 
 <script>
 
+
 const BACKEND =
 "https://skyscope-backend-mhh8.onrender.com";
+
 
 const fileInput =
 document.getElementById("fileInput");
 
+
 const analyzeButton =
 document.getElementById("analyzeButton");
+
 
 const skyImage =
 document.getElementById("skyImage");
 
+
 const placeholder =
 document.getElementById("placeholder");
+
 
 const status =
 document.getElementById("status");
 
+
 const results =
 document.getElementById("results");
+
 
 const loading =
 document.getElementById("loading");
 
+
 let selectedFile = null;
 
 
-fileInput.addEventListener("change", function() {
+fileInput.addEventListener(
+    "change",
+    function() {
 
-    selectedFile = this.files[0];
+        selectedFile = this.files[0];
 
-    if (!selectedFile) return;
-
-    const imageURL =
-        URL.createObjectURL(selectedFile);
-
-    skyImage.src = imageURL;
-
-    skyImage.style.display = "block";
-
-    placeholder.style.display = "none";
-
-    analyzeButton.disabled = false;
-
-    status.textContent =
-        "📷 Foto caricata. Premi Analizza cielo.";
-
-    results.innerHTML = "";
-
-});
-
-
-analyzeButton.addEventListener("click", async function() {
-
-    if (!selectedFile) return;
-
-    loading.style.display = "block";
-
-    analyzeButton.disabled = true;
-
-    status.textContent =
-        "🔭 Invio la foto al sistema astronomico...";
-
-    results.innerHTML = "";
-
-    const formData = new FormData();
-
-    formData.append("image", selectedFile);
-
-
-    try {
-
-        const response = await fetch(
-            BACKEND + "/solve",
-            {
-                method: "POST",
-                body: formData
-            }
-        );
-
-
-        const data = await response.json();
-
-
-        if (!response.ok) {
-
-            throw new Error(
-    data.error +
-    (data.details
-        ? " — " + JSON.stringify(data.details)
-        : "")
-);
+        if (!selectedFile) {
+            return;
         }
 
 
+        const name =
+            selectedFile.name.toLowerCase();
+
+
+        // Mostra l'anteprima solo se il browser
+        // riesce a visualizzare il formato.
+
+        if (
+            name.endsWith(".jpg") ||
+            name.endsWith(".jpeg") ||
+            name.endsWith(".png") ||
+            name.endsWith(".webp") ||
+            name.endsWith(".gif")
+        ) {
+
+            const imageURL =
+                URL.createObjectURL(selectedFile);
+
+            skyImage.src = imageURL;
+
+            skyImage.style.display =
+                "block";
+
+            placeholder.style.display =
+                "none";
+
+        } else {
+
+            skyImage.style.display =
+                "none";
+
+            placeholder.textContent =
+                "📷 Formato RAW/HEIC selezionato";
+
+            placeholder.style.display =
+                "block";
+        }
+
+
+        analyzeButton.disabled =
+            false;
+
+
         status.textContent =
-            "✅ Campo stellare riconosciuto!";
+            "📷 Foto caricata. Premi Analizza cielo.";
 
 
-        results.innerHTML = `
-
-        <p>
-        <b>Ascensione retta:</b>
-        ${Number(data.ra).toFixed(5)}°
-        </p>
-
-        <p>
-        <b>Declinazione:</b>
-        ${Number(data.dec).toFixed(5)}°
-        </p>
-
-        <p>
-        <b>Scala:</b>
-        ${Number(data.pixscale).toFixed(3)}
-        arcsec/pixel
-        </p>
-
-        <p>
-        <b>Orientamento:</b>
-        ${Number(data.orientation).toFixed(2)}°
-        </p>
-
-        `;
+        results.innerHTML = "";
 
     }
+);
 
-    catch(error) {
+
+analyzeButton.addEventListener(
+    "click",
+    async function() {
+
+        if (!selectedFile) {
+            return;
+        }
+
+
+        loading.style.display =
+            "block";
+
+
+        analyzeButton.disabled =
+            true;
+
 
         status.textContent =
-            "❌ Analisi non riuscita.";
+            "🔭 Invio la foto al sistema astronomico...";
+
 
         results.innerHTML =
-            "<p>" + error.message + "</p>";
+            "";
+
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "image",
+            selectedFile,
+            selectedFile.name
+        );
+
+
+        try {
+
+            const response =
+                await fetch(
+                    BACKEND + "/solve",
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
+
+            let data;
+
+
+            try {
+
+                data =
+                    await response.json();
+
+            } catch {
+
+                throw new Error(
+                    "Il server ha restituito una risposta non valida."
+                );
+            }
+
+
+            if (!response.ok) {
+
+                throw new Error(
+
+                    data.error ||
+
+                    "Errore durante l'analisi"
+
+                );
+            }
+
+
+            status.textContent =
+                "✅ Campo stellare riconosciuto!";
+
+
+            let html = "";
+
+
+            if (
+                data.ra !== null &&
+                data.ra !== undefined
+            ) {
+
+                html += `
+                <div class="result-card">
+                    <b>Ascensione retta:</b>
+                    ${Number(data.ra).toFixed(5)}°
+                </div>
+                `;
+            }
+
+
+            if (
+                data.dec !== null &&
+                data.dec !== undefined
+            ) {
+
+                html += `
+                <div class="result-card">
+                    <b>Declinazione:</b>
+                    ${Number(data.dec).toFixed(5)}°
+                </div>
+                `;
+            }
+
+
+            if (
+                data.pixscale !== null &&
+                data.pixscale !== undefined
+            ) {
+
+                html += `
+                <div class="result-card">
+                    <b>Scala:</b>
+                    ${Number(data.pixscale).toFixed(3)}
+                    arcsec/pixel
+                </div>
+                `;
+            }
+
+
+            if (
+                data.orientation !== null &&
+                data.orientation !== undefined
+            ) {
+
+                html += `
+                <div class="result-card">
+                    <b>Orientamento:</b>
+                    ${Number(data.orientation).toFixed(2)}°
+                </div>
+                `;
+            }
+
+
+            if (data.exif) {
+
+                if (data.exif.datetime) {
+
+                    html += `
+                    <div class="result-card">
+                        🕐 <b>Data scatto:</b>
+                        ${data.exif.datetime}
+                    </div>
+                    `;
+                }
+
+
+                if (
+                    data.exif.latitude !== null &&
+                    data.exif.latitude !== undefined
+                ) {
+
+                    html += `
+                    <div class="result-card">
+                        📍 <b>Latitudine:</b>
+                        ${Number(data.exif.latitude).toFixed(6)}
+                    </div>
+                    `;
+                }
+
+
+                if (
+                    data.exif.longitude !== null &&
+                    data.exif.longitude !== undefined
+                ) {
+
+                    html += `
+                    <div class="result-card">
+                        📍 <b>Longitudine:</b>
+                        ${Number(data.exif.longitude).toFixed(6)}
+                    </div>
+                    `;
+                }
+
+            }
+
+
+            results.innerHTML =
+                html;
+
+
+        } catch (error) {
+
+            status.textContent =
+                "❌ Analisi non riuscita.";
+
+
+            if (
+                error.name === "TypeError" &&
+                error.message === "Failed to fetch"
+            ) {
+
+                results.innerHTML = `
+                    <p>
+                    Il server non ha risposto.
+                    Controlla che Render sia Live.
+                    </p>
+                `;
+
+            } else {
+
+                results.innerHTML =
+                    "<p>" +
+                    error.message +
+                    "</p>";
+            }
+
+        } finally {
+
+            loading.style.display =
+                "none";
+
+
+            analyzeButton.disabled =
+                false;
+
+        }
 
     }
-
-    finally {
-
-        loading.style.display = "none";
-
-        analyzeButton.disabled = false;
-
-    }
-
-});
+);
 
 
 if ("serviceWorker" in navigator) {
@@ -346,5 +651,7 @@ if ("serviceWorker" in navigator) {
 
 </script>
 
+
 </body>
+
 </html>
